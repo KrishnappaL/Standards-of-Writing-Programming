@@ -1,0 +1,79 @@
+The social-engineer toolkit (SET) is a tool that helps automate some insanely
+complex techniques and make your attacks believable. A tool is just that, a tool.
+Think of SET as a sword. The sword is only as good as the swordsman’s skill and
+understanding of how to use the sword. Understanding how to customize and
+use the SET to its fullest capacity will make your success ratios on social-
+engineering attacks extremely successful.
+
+se-toolkit 
+
+---------------------------------
+The two main attacks we will be focusing on are the Java applet attack method
+and the credential harvester. The Java applet attack is an attack that does not take
+advantage of the latest sexy exploit, but takes advantage of how Java was
+designed. With Java, there are full-fledged applications called applets. These
+applets are written in Java and are often used in production applications all
+around the world. For example, Cisco’s WebEx utilizes Java applets in order to
+launch online web conferencing. Applets are extremely common in web appli-
+cations and something that is highly believable under the right pretext. Select
+number one, then number two for the site cloner. SET will automatically go out
+to a web page, clone it, rewrite it with a malicious Java applet, rewrite the web
+page to inject the applet, set up a web server, and create multiple payloads for
+you and all within a few minutes.
+Once you select the “site cloner”, select “no” for Network Address Translation
+(NAT) or port forwarding. This would be used only if you were behind a router
+and had port forwarding in place and needed to forward ports. Next, enter the
+Internet protocol (IP) address of your machine (the attacker) as shown in.
+
+Next, we specify what page we want to clone, we will use https://www.trustedsec.
+com as our target. You should notice that
+
+Dave Kennedy created PyInjector and MultiPyInjector which injects
+shellcode straight into memory without touching disk. This often confuses or
+evades antivirus completely and allows you to have a meterpreter shell without
+the worry of being detected. Select number 15, the PyInjector shellcode injec-
+tion. Specify the default port [443]; this is simply what port will connect back to
+use (reverse). We discussed the reverse shells in Chapter 4.
+
+Next, select 1 for the Windows meterpreter reverse TCP payload. When your
+screen is loading.SET works by having multiple methods for attacking the target once the Java
+applet has been accepted. The first is utilizing a Powershell injection technique
+first developed by Matthew Graeber (http://www.exploit-monday.com/2011/10/
+exploiting-powershells-features-not.html) which allows you to utilize Power-
+shell to inject shellcode straight into memory without ever touching disk. In
+addition to this technique, SET also uses a Powershell Execution Restriction
+Bypass attack that was originally released at Defcon 18 (http://www.youtube.
+com/watch?v¼JKlVONfD53w) by David Kennedy (ReL1K) and Josh Kelley
+(winfang). These two attacks combined deliver a crippling blow in gaining
+remote code execution on a system. The second method is the PyInjector that
+you specified previously.
+Once SET is finished loading, it will launch Metasploit automatically.
+
+After clicking “I accept”, then “run” you can switch back to your Kali machine. At
+this point, you should notice multiple meterpreter shells as shown in
+Figure 5.10.
+Once the victim clicks run, they are redirected back to the original website and
+never knew anything happened. In addition, if a user decides to hit cancel, the
+applet will reappear and not allow them to close their browser. The only way
+around it is to go to task manager and kill the browser or hit run. This attack is
+extremely effective and circumvents most of the current antivirus products in
+existence today. In addition, new obfuscated and encrypted payloads are auto-
+matically generated and uploaded to SET every 2 h. Always ensure you are
+running the latest version of SET.
+
+Always, always, always update SET before running it! Dave is a beast when it comes to
+coding and updating SET. At the very least, you will get new encrypted payloads every 2 h.
+This can be extremely handy in bypassing antivirus.
+
+
+
+
+
+
+
+
+
+
+
+
+

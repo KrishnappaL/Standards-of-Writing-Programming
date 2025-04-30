@@ -1,0 +1,304 @@
+Scanning 
+
+For the purpose of our methodology, we will break step 2 into four distinct
+phases:
+2.1. Determining if a system is alive with ping packets.
+2.2. Port scanning the system with Nmap.
+2.3. Leveraging the Nmap scripting engine (NSE) to further interrogate the
+target.
+2.4. Scanning the system for vulnerabilities with Nessus.
+
+
+Step 2.2 is the process of identifying the specific ports and services running
+a particular host.
+Simply defined, ports provide a way or location for software, services, and net-
+works to communicate with hardware like a computer. A port is a data connection
+that allows a computer to exchange information with other computers, software,
+or devices. Prior to the interconnection of computers and networks, information
+port number		service
+20			   FTP DATA TRANSFER                                     
+21			FTP CONTROL
+22			SSH
+23			
+25
+53
+80
+137-139
+443
+445
+1433
+3306
+3389
+5800
+5900
+
+Perimeter devices are computers, servers, routers, firewalls, or other equipment,
+which sit at the outer edge of a protected network. These devices serve as an
+intermediary between protected internal resources and external networks like
+the Internet.
+---------------------
+Unfortunately, manually pinging every potential machine on
+even a small network would be highly inefficient. Fortunately for us, there are
+several tools that allow us to conduct ping sweeps. A ping sweep is a series of
+pings that are automatically sent to a range of IP addresses, rather than indi-
+vidually entering each target’s address.
+===> The simplest way to run a ping sweep is with a tool called FPing. FPing is built
+into Kali and is run from the terminal. The tool can also be downloaded for
+Windows. The easiest way to run FPing is to open terminal window and type the
+following command:
+fping -a -g 172.16.45.1 172.16.45.254>hosts.txt
+
+The “-a” switch is used to show only the live hosts in our output. This makes our
+final report much cleaner and easier to read. The “e-” is used to specify the range
+of IP addresses we want to sweep. You need to enter both the beginning and the
+ending IP addresses. In this example, we scanned all the IPs from 172.16.45.1 to
+172.16.45.254. The “>” character is used to pipe the output to a file, and the
+“hosts.txt” is used to specify the name of the file our results will be saved to. To
+view the hosts.txt file, you can either open it with a text editor or use the “cat”
+command, which is built into the Linux terminal.
+
+--------------
+PORT SCANNING
+
+If you had to choose only one tool to conduct port scanning, you would un-
+doubtedly choose  Nmap. Nmap was written by Gordon “Fyodor” Lyon and is
+available for free from www.insecure.org. It is built into many of today’s Linux
+distributions including Kali. Although it is possible to run Nmap from
+a graphical user interface (GUI), we are going to focus on using the terminal to
+run our port scans.
+-------------------------------------
+When we conduct a port scan, our tool will literally create a packet and send it to
+each designated port on the machine. The goal is to determine what kind of
+a response we get from the target port. Different types of port scans can produce
+different results. It is important to understand the type of scan you are running
+as well as the expected output.
+------------------
+1) THE THREE-WAY HANDSHAKE
+phone conversation (at least before everyone had caller ID!). When you
+want to talk to someone, you pick up the phone and dial the number, the
+receiver picks up the ringing phone not knowing who the caller is and says
+“Hello?”, the original caller then introduces himself by saying “Hi, this is Dave
+Kennedy!” In response to this, the receiver will often acknowledge the caller by
+saying “Oh, hi Dave!” At this point both people have enough information for
+the conversation to continue as normal.
+
+Computers work much the same way. When two computers want to talk, they go
+through a similar process. The first computer connects to the second computer
+by sending an SYN packet to a specified port number. If the second computer is
+listening, it will respond with an SYN/ACK. When the first computer receives the
+SYN/ACK, it replies with an ACK packet. At this point, the two machines can
+communicate normally. In our phone example above, the original dialer is like
+sending the SYN packet. The receiver picking up the phone and saying “Hello?”
+is like the SYN/ACK packet and the original caller introducing himself is like the
+ACK packet
+----------------------------------
+USING NMAP TO PERFORM A TCP CONNECT SCAN
+The first scan we will look at is called the TCP Connect scan. This scan is often
+considered the most basic and stable of all the port scans because Nmap at-
+tempts to complete the three-way handshake on each port specified in the Nmap
+command. Because this scan actually completes the three-way handshake and
+then tears down the connection gracefully, there is little chance that you will
+flood the target system and cause it to crash.
+If you do not specify a specific port range, Nmap will scan the 1000 most
+common ports. Unless you are in a great hurry, it is always recommended to
+scan all ports, not just the 1000 most common. The reason is that oftentimes
+crafty administrators will attempt to obscure a service by running it on
+a nonstandard port. You can scan all the ports by specifying “-p-” when run-
+ning Nmap. Using the “-Pn” switch with every Nmap scan is also recom-
+mended. Utilizing the “-Pn” switch will cause Nmap to disable host discovery
+and force the tool to scan every system as if it were alive. This is extremely
+useful for discovering additional systems and ports that otherwise may be
+missed.
+To run a TCP connect, we issue the following command from a terminal:
+
+nmap -sT -p- -Pn 192.168.18.132
+
+Take a moment to review this command. The first word “nmap” causes the
+Nmap port scanner to start. The second command “-sT” tells Nmap to run
+a TCP Connect scan. Specifically, to break this switch down even further, the
+“-s” is used to tell Nmap what kind of scan we want to run. The “eT” in the
+“-sT” is used to run a scan type of TCP Connect. We use the “-p-” to tell
+Nmap to scan all the ports not just the default 1000. We use the “-Pn”
+switch to skip the host discovery phase and scan all the addresses as if the system were alive and responding to ping requests
+
+nmap -sT -p- -Pn 101.53.146.145
+
+Issuing this command will cause Nmap to port scan all the hosts between the IP
+addresses 192.168.18.1 and 192.168.18.254. Just like ping sweeps, this is
+a very powerful technique that can greatly improve the productivity of your
+scanning life.
+
+If you need to scan a series of hosts that are not in sequential order, you can
+create a text file and list each host IP address on a single line. Then add the “eiL
+path_to_the_text_file” switch to your Nmap command. Doing this allows you
+to scan all your target hosts from a single command. Whenever possible, always
+try to create a single text file containing all your target IPs. Most of the tools we
+discuss have a switch or mechanism for loading this text file. Having a list saves
+the effort or retyping, but more importantly, reduces the number of times you
+will type each IP address and therefore diminishes the chance that you will fat-
+finger the IP address and scan the wrong target
+-------------------##########%%%%%%%%%%%%%%%%%%%%%$$$$$$$$$$$$$$$$------------------------
+USING NMAP TO PERFORM AN SYN SCAN
+The SYN Scan is arguably the most popular Nmap port scan. There are many
+reasons for its popularity, including the fact that it happens to be the default
+Nmap scan. If you run the Nmap command without specifying a scan type
+(using the es switch), Nmap will use the SYN scan by default.
+Aside from the fact that the SYN scan is the default choice, it is also popular
+because it is faster than the TCP connect scan and yet remains quite safe, with
+little chance of (Denial of Service) DoS’ing or crashing the target system. SYN
+scans are faster because rather than completing the entire three-way handshake,
+it only completes the first two steps of the process.
+In an SYN scan, the scanning machine sends an SYN packet to the target and the
+target responds with an SYN/ACK (assuming the port is in use and not filtered)
+just like it did when we ran a TCP Connect scan. However, at this point, rather
+than sending the traditional ACK packet, the scanning machine sends an RST
+(reset) packet to the target. The reset packet tells the target machine to disregard
+any previous packets and close the connection between the two machines. It
+should be clear that the speed advantage of the SYN scan over the TCP Connect
+scan comes from the fact that there are fewer packets sent between the hosts
+when using an SYN scan rather than a TCP Connect scan. Although a few packets
+may not sound like a big advantage, it can add up quickly when scanning
+multiple hosts.
+If we consider the example of comparing the three-way handshake to a phone
+call, SYN scans would be like calling someone up, having the receiver pick up the
+phone and saying “Hello?”, and then simply hanging up on the person without
+a single word.
+
+Another advantage to the SYN scan is that in some instances, it provides a level
+of obscurity or stealth. Because of this feature, the SYN scan is often referred to as
+the “Stealth Scan”. The stealth portion of this scan comes from the fact that
+because the three-way handshake is never fully completed, the official con-
+nection was never 100% established. There are applications and log files that
+require the completion of the three-way handshake before they begin recording
+activity. As a result, if a log file only records completed connections and the SYN
+scan never officially completes a single connection, this scan may be undetected
+by some applications. Please note that this is the exception and not the rule. All
+modern firewalls and intrusion detection systems in use today will detect and
+report an SYN scan!
+Because the SYN scan is the default Nmap scan, we do not technically need to
+specify the scan type with the “es” switch. However, because this book focuses on
+the basics, it is worth the effort to get into the habit of specifying your scan type.
+To run an SYN scan, you can open a terminal window and issue the following
+command:
+nmap -sS -p- -Pn 192.168.18.132
+
+UDP(U)
+nmap -sU 192.168.18.132
+nmap -sUV 172.16.45.135
+
+To elicit a more useful response from our target, we can add the “-sV” switch to
+our UDP scan. The “-sV” switch is used for version scanning but, in this case,
+can also help us narrow the results of our UPD scan.
+
+USING NMAP TO PERFORM AN XMAS SCAN
+In the computer world, a request for comments (RFC) is a document that
+contains either notes or the technical specifications covering a given technology
+or standard. RFCs can provide us with a tremendous amount of detail about the
+inner workings of a particular system. Because RFCs describe the technical de-
+tails of how a system should work, attackers and hackers will often review RFCs
+looking for potential weaknesses or loopholes described in the documentation.
+Xmas tree scans and null scans exploit just such a loophole.
+========================
+Xmas tree and null scans work against Unix and Linux machines but not Windows.
+As a result, Xmas tree and null scans are rather ineffective against Microsoft targets.
+To execute an Xmas tree scan, we simply replace the “-sU” switch from our last
+example with an “-sX”. To run the full scan in the terminal, we would enter
+nmap -sX -p- -Pn 192.168.18.132
+
+Target systems will respond to null scans in the exact same way they respond to
+Xmas tree scans. Specifically, an open port on the target system will send no
+response back to Nmap, whereas a closed port will respond with an RST packet.
+It is important to remember that these scans are only reliable for operating
+systems that comply 100% with the TCP RFC.
+It is important to understand that neither the Xmas tree nor the null scans seek
+to establish any type of communication channel. The whole goal of these scans
+is to determine if a port is open or closed.
+==================================================
+With the previous two paragraphs in mind, consider the following example.
+Assume that our Network Admin Ben Owned puts a simple firewall in front of his
+system to prevent anyone outside of his network from connecting to the system.
+The firewall works by simply dropping any external communications that begin
+with an SYN packet. Ben hires his buddy, the ethical hacker, to scan his system.
+The ethical hacker’s initial TCP Connect scans show nothing. However, being
+a seasoned penetration tester, the ethical hacker follows up his initial scan with
+UDP, Xmas tree, and null scans. The ethical hacker smiles when he discovers that
+both his Xmas tree scans and null scans reveal open ports on Ben’s system.
+This scenario is possible because Nmap creates packets without the SYN flag set.
+Because the filter is only dropping incoming packets with the SYN flag, the Xmas
+tree and null packets are allowed through. To run a null scan, we issue the
+following command in a terminal:
+nmap -sN -p- -Pn 192.168.18.132
+
+----------------------------=================================
+THE NMAP SCRIPTING ENGINE: FROM CATERPILLAR TO BUTTERFLY
+Learning to utilize the NSE is critical to getting the most out of Nmap. When
+properly implemented, the NSE allows Nmap to complete a variety of tasks
+including vulnerability scanning, advanced network discovery, detection of
+backdoors, and in some cases even perform exploitation! The NSE community is
+a very active and open group. New scripts and capabilities are being constantly
+added. If you use the NSE to create something new, I encourage you to share
+your work.
+==========================================================================
+In order to keep things simple, the NSE divides the scripts by category. The current
+categories include auth, broadcast, brute, default, discovery, dos, exploit, external,
+fuzzer, intrusive, malware, safe, version, and vuln. Each category can be further
+broken down into individual scripts that perform a particular function. A hacker
+or penetration tester can run a single script or the entire category (which includes
+multiple scripts). It is important to review the documentation for each category
+and script before invoking them or using them against a target. You can find the
+most recent and up-to-date NSE information at http://nmap.org/nsedoc/.
+==================================================
+In order to invoke the NSE, we use “--script” argument followed by the category or script name and the target IP address as shown below:
+nmap --script banner 192.168.18.132
+The “banner” script is an extension of Nmap that creates a connection to
+a TCP port and prints any output sent from the target system to the local
+terminal. This can be extremely helpful in identifying unrecognized services on
+obscure ports.
+Similarly we could invoke an entire family or category of scripts by using the
+“--script category_name” format as shown below:
+nmap --script vuln 192.168.18.132
+The “vuln” category will run a series of scripts which look for known issues on
+the target system. This category typically provides output only when a vulner-
+ability is discovered. The “vuln” functionality of the NSE is an excellent pre-
+cursor to our conversation on vulnerability scanning
+==========================================================
+Nmap includes an option to change the speed of your port scan. This is done
+with the “-T” switch. The timing switch ranges on a numeric scale from 0 to 5,
+with 0 being the slowest scan and 5, the fastest. Timing options can be extremely
+useful depending on the situation. Slow scans are great for avoiding detection
+while fast scans can be helpful when you have a limited amount of time or large
+number of hosts to scan. Please be aware that by using the fastest scans possible,
+Nmap may provide less accurate results,take 0 to 5 [0 is take much time to scan and 5 is fastest scan]
+nmap -T 3 ipaddr
+nmap -T 5 -sV -p- -Pn 192.168.18.132
+====================================
+Last, the “-O” switch can be useful for fingerprinting the operating system. This is
+handy for determining if the target you are attacking is a Windows, Linux, or
+other type of machine. Knowing the operating system of your target will save you
+time by allowing you to focus your attacks to known weaknesses of that system.
+There is no use in exploring exploits for a Linux machine if your target is running
+Windows.
+==========================================
+Telnet and SSH are great remote services that you should always try to connect to. You can do this from
+the command line by typing: 
+telnet target_ip
+ssh root@target_ip
+nmap -sP 255.255.255.0(subnet)
+
+
+
+Activation Code: 3F3Y-PJJ2-JK64-YKUL-CZYS
+--------------------------------------------------------------------------------------------------------------------------
+
+After you are comfortable with the advanced features of these tools, you should
+look at other scanners as well. There are lots of good port scanners available. Pick
+a few, install them, and learn their features. It may be worth your time and effort
+to explore commercial tools like NeXpose, Metasploit Pro, Core Impact, Canvas
+and more; these products are not exclusively vulnerability scanners (they are
+much more). They all provide excellent vulnerability assessment components,
+although each of these tools will cost you actual cash.
+
+======================================
+Nmap =>port scanning
+Nessus  =>Vulnerability scanning
+

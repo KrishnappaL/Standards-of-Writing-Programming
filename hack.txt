@@ -1,0 +1,266 @@
+======================================================
+Regardless of the information you had to begin with, after completing in-
+depth reconnaissance you should have a list of target IP addresses that can
+be scanned. The second step in our methodology can be broken out into two
+distinct activities. The first activity we conduct is port scanning. Once we have
+finished with port scanning, we will have a list of open ports and potential
+service running on each of the targets. The second activity in the scanning
+phase is vulnerability scanning. Vulnerability scanning is the process of
+locating and identifying specific weaknesses in the software and services of our
+targets.
+=========================================================
+Vulnerability scanners.
+==========================================
+The process of compromising one
+machine and then using that machine to compromise another machine is called
+pivoting.
+=========================================================
+Exploitation can occur locally or remotely. Local exploitation requires the attacker to have
+physical access to the computer while remote exploitation occurs through networks and
+systems when the attacker cannot physically touch the target.
+=============================
+The Penetration Testing Execution Standard (PTES) is a fantastic resource if you are
+looking to find a more in-depth and thorough methodology. The PTES includes both
+technical guidelines which can be used by security professionals as well as a framework
+and common language that can be leveraged by the business community. You can find
+more information at http://www.pentest-standard.org.
+============================================
+WHERE DO I GO FROM HERE?
+It should be noted that there are several alternatives to Kali or Backtrack. All the
+examples in this book should work with each of the security auditing distri-
+butions discussed below. Blackbuntu is an Ubuntu-based security distro with
+a very friendly community, great support, and active development. Black box is
+another great penetration testing distribution based on Ubuntu and includes
+a sleek, lightweight interface and many preinstalled security tools. Matriux is
+similar to Backtrack but also includes a Windows binary directory that can be
+used and accessed directly from a Windows machine. Fedora Security Spin is
+a collection of security-related tools built off of the Fedora distribution. Katana
+is a multiboot DVD that gathers a number of different tools and distributions
+into a single location. Finally, you may want to explore the classic STD distri-
+bution as well as Pentoo, NodeZero, and SamuraiWTF. There are many other
+Linux penetration testing distributionsda simple Google search for “Linux
+Penetration Testing Distributions” will provide you with a plethora of options.
+You could also spend some time building and customizing your own Linux
+distribution by collecting and installing tools as your hacking career progresses.
+=================================
+ifconfig eth0 up
+static ipaddress assign ifconfig eth0 up 192.168.1.23
+dynamic ipaddress: dhclient
+---------------------------------------
+Reconnaissance(Information gathering)
+
+n most cases, people who attend hacking workshops or classes have a basic
+understanding of a few security tools. Typically, these students have used a port
+scanner to examine a system or maybe they have used Wireshark to examine
+network traffic. Some have even played around with exploit tools like Metasploit.
+Unfortunately, most beginners do not understand how these tools fit into the
+grand scheme of a penetration test. As a result, their knowledge is incomplete.
+Following a methodology ensures that you have a plan and know what to do next.
+
+Step 1: begins by conducting a thorough search of public information; some
+organizations call this Open-Source Intelligence (OSINT). The great thing about
+this phase is that in most cases, we can gather a significant amount of data
+without ever sending a single packet to the target. Although it should be pointed
+out that some tools or techniques used in reconnaissance do in fact send in-
+formation directly to the target, it is important to know the difference between
+which tools do and which tools do not touch the target. There are two main
+goals in this phase: first, we need to gather as much information as possible
+about the target; second, we need to sort through all the information gathered
+and create a list of attackable IP addresses or uniform resource locators (URLs)
+==============================================
+To be successful at reconnaissance, you must have a strategy. Nearly all facets of
+information gathering leverage the power of the Internet. A typical strategy needs
+to include both active and passive reconnaissance.
+
+
+Active reconnaissance includes interacting directly with the target. It is important
+to note that during this process, the target may record our IP address and log our
+activity. This has a higher likelihood of being detected if we are attempting to
+perform a PT in a stealth fashion.
+Passive reconnaissance makes use of the vast amount of information available on
+the web. When we are conducting passive reconnaissance, we are not interacting
+directly with the target and as such, the target has no way of knowing, recording,
+or logging our activity.
+
+================#####################))))))))))=========
+httrack ---clone the website
+theHarvester
+./theharvester.py -d syngress.com -l 10 -b google
+whois domainname(.com) or By navigating to http://www.whois.net, you can search for your
+target in the “WHOIS Lookup” box
+===>pay special attention to the DNSservers. If the DNS servers are listed by name only
+==>When available, we can conduct a further Whois search by following the link
+provided in the “Referral URL:” field. You may have to search the web page for
+a link to their Whois service. By using Safename’s Whois service, we can extract
+a significantly larger amount of information
+==>Another great source of information is Netcraft. You can visit their site at http://
+news.netcraft.com.
+host syngress.com (host target_hostname)
+host IP_address (convert to domainname)
+---
+Using the “-a” switch will provide you with verbose output and possibly reveal
+additional information about your target. It is well worth your time to review the
+“host” documentation and help files. You can do so by issuing the “man host”
+command in a terminal window. This help file will allow you to become familiar
+with the various options that can be used to provide additional functionality to
+the “host” tool.
+----**************************-------------
+nslookup is a tool that can be used to query DNS servers and potentially obtain records about the various hosts of which it is aware.
+nslookup
+> server 162.159.26.14
+Default server: 162.159.26.14
+Address: 162.159.26.14#53
+> set type=mx /any
+> syngress.com
+--------
+DIG
+Another great tool for extracting information from DNS is “dig”. To work with
+dig, we simply open a terminal and enter the following command:
+dig @target_ip
+Naturally, you will need to replace the “target_ip” with the actual IP address of
+your target. Among other things, dig makes it very simple to attempt a zone
+transfer. Recall that a zone transfer is used to pull multiple records from a DNS
+server. In some cases, a zone transfer can result in the target DNS server sending
+all the records it contains. This is especially valuable if your target does not
+distinguish between internal and external IPs when conducting a zone transfer.
+We can attempt a zone transfer with dig by using the “-t AXFR” switch
+
+
+dig @192.168.1.23example.com -t AXFR
+If zone transfers are allowed and not restricted, you will be presented with
+a listing of host and IP addresses from the target DNS server that relate to your
+target domain.
+
+FIERCE: WHAT TO DO WHEN ZONE TRANSFERS FAIL
+
+
+----------------------------
+metagoofil-->gather metadata
+
+MetaGooFil is built into Kali and can be invoked by opening a terminal window
+and running the “metagoofil” command (along with the appropriate switches)
+or by navigating to the MetaGooFil executable which is located in the /usr/bin
+directory. This can be accomplished by entering the following command:
+	cd /usr/bin/metagoofil
+After navigating to the MetaGooFil directory, it is a good idea to create a “files”
+folder. The purpose of this folder is to hold all the target files that will be
+downloaded; this keeps the original directory clean. You can create a new folder
+by entering:
+	mkdir files
+With this directory setup, you can run MetaGooFil by issuing the following
+command:
+./metagoofil.py -d syngress.com -t pdf,doc,xls,pptx -n 20 -o files -f results.html
+
+{
+git clone https://github.com/opsdisk/metagoofil
+cd metagoofil
+virtualenv -p python3 .venv  # If using a virtual environment.
+source .venv/bin/activate  # If using a virtual environment.
+pip install -r requirements.txt
+python metagoofil.py -d syngress.com -t pdf,doc,xls,pptx -n 20 -o files -f results.html
+
+}
+===>
+The “-t” switch is used to specify which type or types of files you want
+MetaGooFil to attempt to locate and download. At the time of this writing,
+MetaGooFil was capable of extracting metadata from the following formats: pdf,
+doc, xls, ppt, odp, ods, docx, xlsx, and pptx. You can enter multiple file types by
+separating each type with a comma (but no spaces). The “en” switch is used to
+specify how many files of each type you would like to download for examina-
+tion. You can also specify individual file types to limit the returned results. We
+use the “-o” switch to specify the folder where we want to store each of the files
+that MetaGooFil locates and downloads
+
+
+While the output from MetaGooFil against Syngress reveals nothing, below
+you will find a sample of the tool’s output from a recent penetration test that
+clearly provides additional value and should be included with our reconnais-
+sance data.
+C:\Documents and Settings\dennisl\My Documents\
+
+
+-----------------@@@@@@@@@@@@@@@@@@@@@@@@@@@@----------------------------
+THREATAGENT: ATTACK OF THE DRONES
+Another option for reconnaissance, which includes several information gath-ering tools built into one, is called ThreatAgent Drone. This tool was developed
+by Marcus Carey. You can sign up for a free account at https://www.threatagent.com 
+
+From the results, you can parse names from LinkedIn, Jigsaw, and a number of other public sites and find a large list of e-mail addresses that get extracted and added through tools like theHarvester as shown in Figure 2.15.This is one awesome tool for penetration testers, and something that I highly recommend if you are performing reconnaissance on an organization or company.
+------------------------------------------------
+If you are a Windows user, FOCA and SearchDiggity are awesome tools for
+extracting metadata and expanding your target list. Both FOCA and Search-
+Diggity are available for free. FOCA can be found at http://www.informatica64.
+com/foca.aspx. Unless you are up-to-date on your Spanish, you will need to
+locate and click on the Union Jack (flag of the United Kingdom) icon. Doing so
+will load the English version of the page. SearchDiggity is another great tool that
+leverages OSINT, Google hacking, and data extraction. The tool includes a suite
+of products and leverages a number of resources to provide results. Invest the
+time required to master each of these tools and you will be on your way to
+mastering digital reconnaissance.
+
+-------------------
+Do Not Run These Queries Against Unauthorized
+Targets! You can find the GHDB at http://www.hackersforcharity.org/ghdb.
+While you are there, take a minute to read about Hackers for Charity and
+Johnny’s efforts with the “food for work” program.
+-----
+Paterva’s Maltego is a very powerful tool that aggregates information from public
+databases and provides shockingly accurate details about your target organiza-
+tion. These details can be technical in nature, such as the location or IP address
+of your firewall, or they can be personal, such as the physical location of your
+currently (travelling) salesman. Learning to master Maltego takes a little effort
+but is well worth your time. A free version is available in Kali.
+https://www.google.com/search?client=ubuntu-sn&channel=fs&q=Paterva%E2%80%99s+Maltego
+
+------
+Finally, it is worth your time to explore the “Swiss Army Knife Internet Tool”
+Robtex. This site is often a one-stop shop for information gathering because it is
+so versatile and provides so much information.
+-------------------------------------=================.......
+
+
+
+
+wget http://http.kali.org/kali/pool/main/k/kali-archive-keyring/kali-archive-keyring_2024.1_all.deb
+sudo dpkg -i kali-archive-keyring_2024.1_all.deb
+
+
+========================================
+To properly use a Google directive, you need three things:
+1. The name of the directive you want to use
+2. A colon
+3. The term you want to use in the directive.
+After you have entered the three pieces of information above, you can search as
+you normally would. To utilize the “site:” directive, we need to enter the
+following into a Google search box:
+site:domain term(s) to search
+site:dsu.edu pat engebretson
+allintitle:index of
+inurl:admin
+cache:syngress.com
+filetype:pdf
+site:dsu.edu filetype:pptx
+inurl:login
+or the following:
+Logon
+Signin
+Signon
+Forgotpassword
+Forgot
+Reset
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
